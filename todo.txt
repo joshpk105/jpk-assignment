@@ -1,6 +1,4 @@
- - Add and view ownership
  - Add book editing 
- - Normalize purchase dates
  - Add email account verification
  - Add email library sharing
  - init database on Heroku

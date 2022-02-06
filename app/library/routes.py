@@ -21,11 +21,16 @@ def add_book():
                 db.session.add(authors_db[-1])
         db.session.flush()
         db.session.refresh(book)
-        map(db.session.refresh, authors_db)
         for a in authors_db:
             db.session.refresh(a)
             authorship = Authorship(author_id=a.id, book_id=book.id)
             db.session.add(authorship)
+        owner = Ownership(user_id=current_user.id, 
+            book_id=book.id, 
+            note=form.note.data)
+        if not form.purchase.data is None:
+            owner.purchase_date = form.purchase.data
+        db.session.add(owner)
         db.session.commit()
         return redirect(url_for("library.view"))
     return render_template("library/add.html", title="Add Book", form=form)
@@ -33,15 +38,15 @@ def add_book():
 @bp.route("/view", methods=["GET"])
 @login_required
 def view():
-    rows = db.session.query(Book, Authorship, Author).filter(Book.id == Authorship.book_id).filter(Authorship.author_id == Author.id).all()
+    rows = db.session.query(Ownership, Book, Authorship, Author).filter(Ownership.book_id==Book.id).filter(Book.id == Authorship.book_id).filter(Authorship.author_id == Author.id).where(Ownership.user_id==current_user.id).all()
     library = {}
     for r in rows:
         if r[0].id not in library:
-            library[r[0].id] = {"title": r[0].title, "authors": r[2].name}
+            library[r[0].book_id] = {"title": r[1].title, 
+                "authors": r[3].name, "note": r[0].note, 
+                "purchase": r[0].purchase_date}
         else:
-            library[r[0].id]["authors"] += (", " + r[2].name)
-    #library = Book.query.join(Authorship.book_id).join(Author.id)
-    print(library)
+            library[r[0].book_id]["authors"] += (", " + r[3].name)
     return render_template("library/view.html", books=library)
     
 

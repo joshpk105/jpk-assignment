@@ -1,7 +1,8 @@
 import re
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateTimeField, SubmitField, FieldList
+from wtforms import StringField, PasswordField, SubmitField, FieldList
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.fields import DateField
 from app.models import Author, Book, Ownership
 from flask_login import current_user
 
@@ -9,7 +10,7 @@ collapse = re.compile(r'\s+')
 
 class NewBookForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
-    #purchase = DateTimeField('Purchase Date')
+    purchase = DateField('Purchase Date', format='%Y-%m-%d')
     # Not sure how to allow for more or less entries dynamically
     authors = FieldList(StringField('Author'), min_entries=5)
     note = StringField('Note')
@@ -27,5 +28,9 @@ class NewBookForm(FlaskForm):
         title.data = collapse.sub(' ', title.data.strip())
         if len(title.data) == 0:
             raise ValidationError('Please enter a title.')
+
+    def validate_purchase(self, purchase):
+        if purchase.data is None:
+            raise ValidationError("Please enter a purchase date.")
     
         

@@ -19,6 +19,13 @@
             {% endfor %}
         </p>
         <p>
+            {{ form.purchase.label }}<br>
+            {{ form.purchase() }}<br>
+            {% for error in form.purchase.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
             {{ form.note.label }}<br>
             {{ form.note() }}<br>
             {% for error in form.note.errors %}

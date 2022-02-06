@@ -47,7 +47,7 @@ class Book(db.Model):
 
 class Ownership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    purchase_datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    purchase_date = db.Column(db.Date, default=datetime.today())
     note = db.Column(db.UnicodeText)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
