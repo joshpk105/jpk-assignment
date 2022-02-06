@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% for book in books %}
+    {% for id, book in books.items() %}
         {% include 'library/_book.html' %} 
     {% endfor %}
 {% endblock %}

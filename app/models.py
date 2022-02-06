@@ -26,16 +26,21 @@ def load_user(id):
 class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(200))
-    #books = db.relationship('Book', backref='author', lazy='dynamic') 
 
     def __repr__(self):
         return '<Author {}>'.format(self.name)
 
+class Authorship(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('author.id'))
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
+
+    def __repr__(self):
+        return '<Authorship {}->{}>'.format(self.author_id, self.book_id)
+
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Unicode(120))
-    # When referenceing in ForeignKey must use lower-case?
-    owner = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<Book {}>'.format(self.title)

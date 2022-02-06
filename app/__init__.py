@@ -16,7 +16,7 @@ def create_app(config_class=Config):
 
     # Initilize extensions
     db.init_app(flapp)
-    migrate.init_app(flapp)
+    migrate.init_app(flapp, db)
     login.init_app(flapp)
 
     # Blueprints
