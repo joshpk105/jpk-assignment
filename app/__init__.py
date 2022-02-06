@@ -26,6 +26,9 @@ def create_app(config_class=Config):
     from app.main import bp as main_bp
     flapp.register_blueprint(main_bp)
 
+    from app.library import bp as library_bp
+    flapp.register_blueprint(library_bp, url_prefix="/library")
+
     return flapp
 
 from app import models

@@ -1,0 +1,10 @@
+ - Add and view book authors
+ - Add and view ownership
+ - Normalize purchase dates
+ - Add email account verification
+ - Add email library sharing
+ - init database on Heroku
+ - deploy on Heroku
+ - test on heroku
+ - test rebuild environment in new docker
+ - extras?
