@@ -4,18 +4,23 @@ from flask_login import login_user, logout_user, current_user
 from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm
+from app.email import send_verification
 from app.models import User
+from urllib.parse import urlparse, urlunparse, urlencode, unquote
 
 
 @bp.route('/login', methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and current_user.email_verified:
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
+            return redirect(url_for('auth.login'))
+        if not user.email_verified:
+            flash('Check your email for verification link.')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -37,8 +42,22 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
+        user.set_email_hash()
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        # Build verification link
+        url = urlparse(request.base_url)
+        url = url._replace(path=url_for('auth.verify'))
+        q = {"user": user.id, "key": user.email_hash}
+        url = url._replace(query=urlencode(q))
+        send_verification(user.email, urlunparse(url))
+        flash('Congratulations, you are now a registered user! Click the link in your email to verify.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Register', form=form)
+
+@bp.route('/verify', methods=['GET','POST'])
+def verify():
+    user = db.session.query(User).filter(User.id==request.args['user']).first()
+    user.check_email_hash(unquote(request.args['key']))
+    db.session.commit()
+    return redirect(url_for('auth.login'))

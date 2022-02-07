@@ -1,5 +1,4 @@
  - Add book editing 
- - Add email account verification
  - init database on Heroku
  - deploy on Heroku
  - test on heroku

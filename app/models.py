@@ -8,16 +8,22 @@ class User(UserMixin, db.Model):
     username = db.Column(db.Unicode(64), index=True, unique=True)
     email = db.Column(db.Unicode(320), index=True, unique=True)
     password_hash = db.Column(db.Unicode(128))
+    email_hash = db.Column(db.Unicode(128))
+    email_verified = db.Column(db.Boolean, default=False)
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-    # Shouldn't this be done on the users computer in javascript?
     def set_password(self, pw):
         self.password_hash = generate_password_hash(pw)
     
-    # This function should be taking a hash?
     def check_password(self, pw):
         return check_password_hash(self.password_hash, pw)
+
+    def set_email_hash(self):
+        self.email_hash = generate_password_hash(str(self.id) + self.username)
+
+    def check_email_hash(self, in_hash):
+        self.email_verified = (self.email_hash == in_hash)
 
 @login.user_loader
 def load_user(id):

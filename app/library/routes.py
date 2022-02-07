@@ -40,7 +40,11 @@ def add_book():
 @login_required
 def view():
     form = SendLibraryForm()
-    rows = db.session.query(Ownership, Book, Authorship, Author).filter(Ownership.book_id==Book.id).filter(Book.id == Authorship.book_id).filter(Authorship.author_id == Author.id).where(Ownership.user_id==current_user.id).all()
+    rows = db.session.query(Ownership, Book, Authorship, Author)\
+        .filter(Ownership.book_id==Book.id)\
+        .filter(Book.id == Authorship.book_id)\
+        .filter(Authorship.author_id == Author.id)\
+        .where(Ownership.user_id==current_user.id).all()
     library = {}
     for r in rows:
         if r[0].id not in library:
