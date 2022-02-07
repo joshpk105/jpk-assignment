@@ -1,0 +1,11 @@
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.recipient.label }}<br>
+        {{ form.recipient(size=60) }}<br>
+        {% for error in form.recipient.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.send() }}</p>
+</form><br>

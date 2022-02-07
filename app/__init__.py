@@ -3,10 +3,12 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_mail import Mail, Message
 
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
+mail = Mail()
 login.login_view = "auth.login"
 login.login_message = 'Please log in to access this page.'
 
@@ -18,6 +20,7 @@ def create_app(config_class=Config):
     db.init_app(flapp)
     migrate.init_app(flapp, db)
     login.init_app(flapp)
+    mail.init_app(flapp)
 
     # Blueprints
     from app.auth import bp as auth_bp

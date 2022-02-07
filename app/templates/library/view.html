@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block send %}
+    {% include 'library/_send.html' %} 
+{% endblock %}
+
 {% block content %}
     {% for id, book in books.items() %}
         {% include 'library/_book.html' %} 

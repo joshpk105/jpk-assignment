@@ -3,8 +3,9 @@ from werkzeug.urls import url_parse
 from flask_login import login_required, current_user
 from app import db
 from app.library import bp
-from app.library.forms import NewBookForm
+from app.library.forms import NewBookForm, SendLibraryForm
 from app.models import Book, Author, Ownership, Authorship
+from app.email import send_email
 
 @bp.route("/add", methods=["GET", "POST"])
 @login_required
@@ -35,9 +36,10 @@ def add_book():
         return redirect(url_for("library.view"))
     return render_template("library/add.html", title="Add Book", form=form)
 
-@bp.route("/view", methods=["GET"])
+@bp.route("/view", methods=["GET","POST"])
 @login_required
 def view():
+    form = SendLibraryForm()
     rows = db.session.query(Ownership, Book, Authorship, Author).filter(Ownership.book_id==Book.id).filter(Book.id == Authorship.book_id).filter(Authorship.author_id == Author.id).where(Ownership.user_id==current_user.id).all()
     library = {}
     for r in rows:
@@ -47,7 +49,9 @@ def view():
                 "purchase": r[0].purchase_date}
         else:
             library[r[0].book_id]["authors"] += (", " + r[3].name)
-    return render_template("library/view.html", books=library)
+    if form.validate_on_submit():
+        send_email("Shared Library", form.recipient.data, str(library), "")
+    return render_template("library/view.html", books=library, form=form)
     
 
 

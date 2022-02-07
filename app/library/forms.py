@@ -2,11 +2,15 @@ import re
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FieldList
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from wtforms.fields import DateField
+from wtforms.fields import DateField, EmailField
 from app.models import Author, Book, Ownership
 from flask_login import current_user
 
 collapse = re.compile(r'\s+')
+
+class SendLibraryForm(FlaskForm):
+    recipient = EmailField('Email Library', validators=[DataRequired()])
+    send = SubmitField("Send")
 
 class NewBookForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
