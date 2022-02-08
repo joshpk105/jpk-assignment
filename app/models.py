@@ -10,6 +10,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.Unicode(128))
     email_hash = db.Column(db.Unicode(128))
     email_verified = db.Column(db.Boolean, default=False)
+
+    ownership = db.relationship("Ownership", backref="user", cascade="all,delete", passive_deletes=True)
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -33,6 +36,8 @@ class Author(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(200))
 
+    authorship = db.relationship("Authorship", backref="author", cascade="all,delete", passive_deletes=True)
+
     def __repr__(self):
         return '<Author {}>'.format(self.name)
 
@@ -41,15 +46,14 @@ class Authorship(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('author.id', ondelete="CASCADE"))
     book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete="CASCADE"))
 
-    as_author_rel = db.relationship("Author", backref="author", cascade="all,delete", passive_deletes=True)
-    as_book_rel = db.relationship("Book", backref="book", cascade="all,delete", passive_deletes=True)
-
     def __repr__(self):
         return '<Authorship {}->{}>'.format(self.author_id, self.book_id)
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Unicode(120))
+
+    own_book_rel = db.relationship("Ownership", backref="book", cascade="all,delete", passive_deletes=True)
 
     def __repr__(self):
         return '<Book {}>'.format(self.title)
@@ -60,9 +64,6 @@ class Ownership(db.Model):
     note = db.Column(db.UnicodeText)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"))
     book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete="CASCADE"))
-
-    own_book_rel = db.relationship("Book", backref="book", cascade="all,delete", passive_deletes=True)
-    own_user_rel = db.relationship("User", backref="user", cascade="all,delete", passive_deletes=True)
 
     def __repr__(self):
         return '<Ownership {}>'.format(purchase_datetime)
