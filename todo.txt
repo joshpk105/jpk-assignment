@@ -1,4 +1,3 @@
- - Add book editing 
  - init database on Heroku
  - deploy on Heroku
  - test on heroku

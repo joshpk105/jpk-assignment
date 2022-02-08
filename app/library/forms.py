@@ -12,13 +12,12 @@ class SendLibraryForm(FlaskForm):
     recipient = EmailField('Email Library', validators=[DataRequired()])
     send = SubmitField("Send")
 
-class NewBookForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired()])
+class BookForm(FlaskForm):
+    title = StringField('Title', validators=[])
     purchase = DateField('Purchase Date', format='%Y-%m-%d')
     # Not sure how to allow for more or less entries dynamically
     authors = FieldList(StringField('Author'), min_entries=5)
     note = StringField('Note')
-    submit = SubmitField('Add Book')
 
     def validate_authors(self, authors):
         max_len = 0
@@ -36,5 +35,15 @@ class NewBookForm(FlaskForm):
     def validate_purchase(self, purchase):
         if purchase.data is None:
             raise ValidationError("Please enter a purchase date.")
+
+class NewBookForm(BookForm):
+    submit = SubmitField('Add Book')
+
+class EditBookForm(BookForm):
+    submit = SubmitField("Edit Book")
+
+    # If title is empty we delete the book
+    def validate_title(self, title):
+        title.data = collapse.sub(' ', title.data.strip())
     
         

@@ -1,5 +1,4 @@
 from flask import render_template, redirect, url_for, flash, request
-from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from app import db
 from app.auth import bp
@@ -24,7 +23,7 @@ def login():
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
+        if not next_page or urlparse(next_page).netloc != '':
             next_page = url_for('main.index')
         return redirect(next_page)
     return render_template('auth/login.html', title='Sign In', form=form)
@@ -57,7 +56,10 @@ def register():
 
 @bp.route('/verify', methods=['GET','POST'])
 def verify():
-    user = db.session.query(User).filter(User.id==request.args['user']).first()
-    user.check_email_hash(unquote(request.args['key']))
-    db.session.commit()
+    if "user" in request.args and "key" in request.args:
+        user = db.session.query(User).filter(User.id==request.args['user']).first()
+        user.check_email_hash(unquote(request.args['key']))
+        db.session.commit()
+    else:
+        print("Verify query incorrect: ", request)
     return redirect(url_for('auth.login'))
