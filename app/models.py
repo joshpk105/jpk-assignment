@@ -41,6 +41,9 @@ class Authorship(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('author.id', ondelete="CASCADE"))
     book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete="CASCADE"))
 
+    author_rel = db.relationship("Author", backref="author", cascade="all,delete", passive_deletes=True)
+    book_rel = db.relationship("Book", backref="book", cascade="all,delete", passive_deletes=True)
+
     def __repr__(self):
         return '<Authorship {}->{}>'.format(self.author_id, self.book_id)
 
@@ -57,6 +60,9 @@ class Ownership(db.Model):
     note = db.Column(db.UnicodeText)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"))
     book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete="CASCADE"))
+
+    book_rel = db.relationship("Book", backref="book", cascade="all,delete", passive_deletes=True)
+    user_rel = db.relationship("User", backref="user", cascade="all,delete", passive_deletes=True)
 
     def __repr__(self):
         return '<Ownership {}>'.format(purchase_datetime)

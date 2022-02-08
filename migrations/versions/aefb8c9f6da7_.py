@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 25da9e416d51
+Revision ID: aefb8c9f6da7
 Revises: 
-Create Date: 2022-02-06 20:35:24.218849
+Create Date: 2022-02-08 15:11:50.435877
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '25da9e416d51'
+revision = 'aefb8c9f6da7'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -33,6 +33,8 @@ def upgrade():
     sa.Column('username', sa.Unicode(length=64), nullable=True),
     sa.Column('email', sa.Unicode(length=320), nullable=True),
     sa.Column('password_hash', sa.Unicode(length=128), nullable=True),
+    sa.Column('email_hash', sa.Unicode(length=128), nullable=True),
+    sa.Column('email_verified', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
@@ -41,8 +43,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('author_id', sa.Integer(), nullable=True),
     sa.Column('book_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['author_id'], ['author.id'], ),
-    sa.ForeignKeyConstraint(['book_id'], ['book.id'], ),
+    sa.ForeignKeyConstraint(['author_id'], ['author.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['book_id'], ['book.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('ownership',
@@ -51,8 +53,8 @@ def upgrade():
     sa.Column('note', sa.UnicodeText(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('book_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['book_id'], ['book.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['book_id'], ['book.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
