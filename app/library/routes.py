@@ -110,11 +110,12 @@ def db_update_authors(form, rows):
         # Delete author
         elif i < len(rows) and author.data == "":
             db.session.delete(rows[i][2])
+            # Annoying hack since deletes not setup nicely
+            db.session.flush()
             db.session.delete(rows[i][3])
         # Update author
         elif i < len(rows) and rows[i][3].name != author.data:
             rows[i][3].name = author.data
-    db.session.flush()
     # Add Authorship for new authors
     for author in new_authors:
         db.session.refresh(author)
