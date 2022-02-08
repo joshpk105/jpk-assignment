@@ -21,12 +21,12 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Please use a different username.')
-        if len(username) > 64:
+        if len(username.data) > 64:
             raise ValidationError('Username cannot be larger than 64 characters')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
-        if len(email) > 320:
+        if len(email.data) > 320:
             raise ValidationError('Email cannot be larger than 320 characters')
