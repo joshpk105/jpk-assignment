@@ -9,7 +9,7 @@ from flask_login import current_user
 collapse = re.compile(r'\s+')
 
 class SendLibraryForm(FlaskForm):
-    recipient = EmailField('Email Library', validators=[DataRequired()])
+    recipient = EmailField('Email Library', validators=[DataRequired(), Email()])
     send = SubmitField("Send")
 
 class BookForm(FlaskForm):
