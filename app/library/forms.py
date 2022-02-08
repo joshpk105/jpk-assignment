@@ -24,6 +24,10 @@ class BookForm(FlaskForm):
         for a in authors:
             a.data = collapse.sub(' ', a.data.strip())
             max_len = max(max_len, len(a.data))
+            # Need to check whether len() counts bytes
+            # and if the db handles it the same way
+            if len(a.data) > 200:
+                raise ValidationError('Author name too long.')
         if max_len == 0:
             raise ValidationError('Please enter at least one author.')
     
@@ -31,6 +35,10 @@ class BookForm(FlaskForm):
         title.data = collapse.sub(' ', title.data.strip())
         if len(title.data) == 0:
             raise ValidationError('Please enter a title.')
+        # Need to check whether len() counts bytes
+        # and if the db handles it the same way
+        if len(title.data) > 120:
+            raise ValidationError('Title too long.')
 
     def validate_purchase(self, purchase):
         if purchase.data is None:
@@ -45,5 +53,7 @@ class EditBookForm(BookForm):
     # If title is empty we delete the book
     def validate_title(self, title):
         title.data = collapse.sub(' ', title.data.strip())
+        if len(title.data) > 120:
+            raise ValidationError('Title too long.')
     
         
