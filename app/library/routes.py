@@ -87,13 +87,13 @@ def edit_query(own_id):
         .filter(Authorship.author_id == Author.id)\
         .order_by(Author.id).all()
 
-# Ideally this would be simply handled by the database
-# but I couldn't quickly determine the necessary syntax for
-# SQLAlchemy.
+# A couple of deletes based on database structure
 def delete_book_tree(form, rows):
+    # Delete Book, Ownership, and Authorship
+    db.session.delete(rows[0][1])
     for row in rows:
-        for t in row:
-            db.session.delete(t)
+        # Delete Authors
+        db.session.delete(row[3])
     db.session.commit()
 
 # Update authors based on form contents
@@ -109,13 +109,14 @@ def db_update_authors(form, rows):
             db.session.add(new_authors[-1])
         # Delete author
         elif i < len(rows) and author.data == "":
-            db.session.delete(rows[i][2])
-            # Annoying hack since deletes not setup nicely
-            db.session.flush()
+            # Delete Author and Authorship
             db.session.delete(rows[i][3])
         # Update author
         elif i < len(rows) and rows[i][3].name != author.data:
             rows[i][3].name = author.data
+        else:
+            print("Unexpected update author case.")
+    db.session.flush()
     # Add Authorship for new authors
     for author in new_authors:
         db.session.refresh(author)

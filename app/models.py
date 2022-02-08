@@ -38,8 +38,8 @@ class Author(db.Model):
 
 class Authorship(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('author.id'))
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('author.id', ondelete="CASCADE"))
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete="CASCADE"))
 
     def __repr__(self):
         return '<Authorship {}->{}>'.format(self.author_id, self.book_id)
@@ -55,8 +55,8 @@ class Ownership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     purchase_date = db.Column(db.Date, default=datetime.today())
     note = db.Column(db.UnicodeText)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"))
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete="CASCADE"))
 
     def __repr__(self):
         return '<Ownership {}>'.format(purchase_datetime)
