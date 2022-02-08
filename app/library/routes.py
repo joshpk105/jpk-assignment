@@ -109,8 +109,8 @@ def db_update_authors(form, rows):
             db.session.add(new_authors[-1])
         # Delete author
         elif i < len(rows) and author.data == "":
-            db.session.delete(rows[i][3])
             db.session.delete(rows[i][2])
+            db.session.delete(rows[i][3])
         # Update author
         elif i < len(rows) and rows[i][3].name != author.data:
             rows[i][3].name = author.data
