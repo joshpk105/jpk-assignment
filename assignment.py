@@ -1,4 +1,4 @@
-from app import flapp, db
+from app import app, db
 from app.models import User, Book, Author, Ownership
 
 @app.shell_context_processor

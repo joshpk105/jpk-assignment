@@ -13,25 +13,25 @@ login.login_view = "auth.login"
 login.login_message = 'Please log in to access this page.'
 
 def create_app(config_class=Config):
-    flapp = Flask(__name__)
-    flapp.config.from_object(Config)
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
     # Initilize extensions
-    db.init_app(flapp)
-    migrate.init_app(flapp, db)
-    login.init_app(flapp)
-    mail.init_app(flapp)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
+    mail.init_app(app)
 
     # Blueprints
     from app.auth import bp as auth_bp
-    flapp.register_blueprint(auth_bp, url_prefix="/auth")
+    app.register_blueprint(auth_bp, url_prefix="/auth")
 
     from app.main import bp as main_bp
-    flapp.register_blueprint(main_bp)
+    app.register_blueprint(main_bp)
 
     from app.library import bp as library_bp
-    flapp.register_blueprint(library_bp, url_prefix="/library")
+    app.register_blueprint(library_bp, url_prefix="/library")
 
-    return flapp
+    return app
 
 from app import models
